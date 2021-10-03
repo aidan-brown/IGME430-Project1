@@ -1,0 +1,620 @@
+body {
+    background: url(/media/bg.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+
+    margin: 0;
+    padding: 0;
+
+    cursor: default;
+}
+
+button {
+    cursor: pointer;
+}
+
+main {
+    background: red;
+    background: linear-gradient(315deg, rgba(167,0,0,1) 0%, rgba(255,0,0,1) 25%, rgba(255,0,0,1) 50%, rgba(255,0,0,1) 75%, rgba(255,110,110,1) 100%);
+
+    width: 78rem;
+    margin: 10rem auto;
+    padding: 2rem;
+
+    border: .5rem solid linear-gradient(315deg, rgba(167,0,0,1) 0%, rgba(255,0,0,1) 25%, rgba(255,0,0,1) 50%, rgba(255,0,0,1) 75%, rgba(255,110,110,1) 100%);
+    border-radius: 1rem 1rem 1rem 10rem;
+    box-shadow: .5rem .5rem rgb(70, 0, 0);
+}
+
+#doc{
+    font-family: 'Press Start 2P', Arial, Helvetica, sans-serif;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1rem solid rgba(0, 0, 0, 0);
+    border-radius: 0 0 1rem 0;
+    color: white;
+    text-decoration: none;
+
+    position: fixed;
+    top: 0;
+    left: 0;
+}
+
+#doc:hover{
+    color: rgb(184, 184, 184);
+}
+
+#content {
+    grid-area: content;
+
+    display: grid;
+    grid-template-areas:
+        "display links"
+        "display filters"
+        "display buttons";
+    grid-template-columns: 4fr 2fr;
+    grid-template-rows: 4fr 1fr 2fr;
+    grid-column-gap: 5rem;
+    grid-row-gap: 0;
+    margin: auto;
+
+    width: 75rem;
+    height: 50rem;
+
+    font-family: 'Press Start 2P', Arial, Helvetica, sans-serif;
+}
+
+/* #region  Display */
+.poke-display {
+    grid-area: display;
+
+    background: url(/media/dexBg.jpg);
+    background-position: center;
+
+    /* display: grid; */
+    grid-template-areas:
+        "name name name name"
+        "sprite sprite sprite sprite"
+        "stats stats abilities abilities"
+        "types  types  abilities abilities";
+    grid-template-columns: 2fr 2fr 2fr 2fr;
+    grid-template-rows: .5fr 2fr 10rem 2rem;
+
+    padding: 0 0 .5rem 0;
+
+    width: 100%;
+
+    border: 2rem solid rgb(196, 167, 167);
+    border-radius: 1rem 1rem 1rem 5rem;
+
+    box-shadow: .2rem .2rem rgb(56, 0, 0);
+}
+
+.poke-display>div{
+    border-style: solid;
+    border-color: rgba(0, 0, 0, 0);
+}
+
+.poke-wiki {
+    grid-area: name;
+
+    text-decoration: none;
+    text-align: center;
+    font-size: 1.5rem;
+    margin: auto;
+    color: black;
+
+    height: 100%;
+    width: 100%;
+}
+
+.poke-sprite {
+    grid-area: sprite;
+
+    background: none;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-origin: content-box;
+    background-position: center;
+    width: 100%;
+    height: 100%;
+    margin-left: auto;
+
+    border-width: .5rem 0 0 0;
+
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    /* align-items: center; */
+}
+
+.poke-sprite img {
+    width: 20rem;
+    align-self: center;
+}
+
+.poke-sprite p {
+    align-self: flex-start;
+    font-size: 1.75rem;
+    margin: 0;
+    padding: .25rem;
+
+    background: rgb(98, 87, 255);
+    color: black;
+}
+
+.poke-stats {
+    grid-area: stats;
+    width: 100%;
+    height: 100%;
+    margin: auto;
+    padding-top: 1rem;
+
+    border-width: .5rem 0 0 0;
+}
+
+.poke-stats div{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: auto;
+    width: 95%;
+}
+
+.poke-stats div p{
+    margin: 0;
+}
+
+.poke-stats p {
+    font-size: 1rem;
+    margin: 1rem;
+}
+
+.poke-abilities {
+    grid-area: abilities;
+
+    height: 100%;
+
+    border-width: .5rem 0 0 .5rem;
+
+    overflow-y: scroll;
+    overflow-x: hidden;
+}
+
+.poke-abilities p {
+    margin-left: .5rem;
+    font-size: 1rem;
+    font-family: 'VT323', Arial, Helvetica, sans-serif;
+}
+
+.poke-abilities p strong {
+    font-family: 'Press Start 2P', Arial, Helvetica, sans-serif;
+}
+
+.poke-abilities::-webkit-scrollbar{
+    background: none;
+    width: .5rem;
+}
+
+.poke-abilities::-webkit-scrollbar-thumb{
+    background: rgb(162, 157, 233);
+    border-radius: 1rem;
+}
+
+.poke-abilities::-webkit-scrollbar-thumb:hover{
+    background: rgb(128, 124, 184);
+}
+
+.poke-types {
+    grid-area: types;
+
+    width: 85%;
+    height: 75%;
+
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    grid-template-rows: repeat(auto-fit, auto);
+    grid-column-gap: 1rem;
+
+    text-align: center;
+
+    margin: auto;
+
+    border-width: 0;
+}
+
+.poke-types p {
+    margin: 0;
+}
+
+/* #region  Types */
+.poke-types .water {
+    background: slateblue;
+
+    border: .2rem solid slateblue;
+    border-radius: 1rem;
+}
+
+.poke-types .fire {
+    background: orange;
+
+    border: .2rem solid orange;
+    border-radius: 1rem;
+}
+
+.poke-types .grass {
+    background: lightgreen;
+
+    border: .2rem solid lightgreen;
+    border-radius: 1rem;
+}
+
+.poke-types .normal {
+    background: lightgray;
+
+    border: .2rem solid lightgray;
+    border-radius: 1rem;
+}
+
+.poke-types .rock {
+    background: burlywood;
+
+    border: .2rem solid burlywood;
+    border-radius: 1rem;
+}
+
+.poke-types .poison {
+    background: purple;
+
+    border: .2rem solid purple;
+    border-radius: 1rem;
+}
+
+.poke-types .flying {
+    background: skyblue;
+
+    border: .2rem solid skyblue;
+    border-radius: 1rem;
+}
+
+.poke-types .bug {
+    background: green;
+
+    border: .2rem solid green;
+    border-radius: 1rem;
+}
+
+.poke-types .electric {
+    background: yellow;
+
+    border: .2rem solid yellow;
+    border-radius: 1rem;
+}
+
+.poke-types .ground {
+    background: goldenrod;
+
+    border: .2rem solid goldenrod;
+    border-radius: 1rem;
+}
+
+.poke-types .fairy {
+    background: pink;
+
+    border: .2rem solid pink;
+    border-radius: 1rem;
+}
+
+.poke-types .psychic {
+    background: violet;
+
+    border: .2rem solid violet;
+    border-radius: 1rem;
+}
+
+.poke-types .steel {
+    background: grey;
+
+    border: .2rem solid grey;
+    border-radius: 1rem;
+}
+
+.poke-types .dark {
+    background: darkslategrey;
+
+    border: .2rem solid darkslategrey;
+    border-radius: 1rem;
+}
+
+.poke-types .ghost {
+    background: darkviolet;
+
+    border: .2rem solid darkviolet;
+    border-radius: 1rem;
+}
+
+.poke-types .fighting {
+    background: darkred;
+
+    border: .2rem solid darkred;
+    border-radius: 1rem;
+}
+
+.poke-types .ice {
+    background: cyan;
+
+    border: .2rem solid cyan;
+    border-radius: 1rem;
+}
+
+.poke-types .dragon {
+    background: orangered;
+
+    border: .2rem solid orangered;
+    border-radius: 1rem;
+}
+
+/* #endregion */
+
+/* #endregion */
+
+/* #region  Links */
+.poke-links {
+    grid-area: links;
+
+    width: 700px;
+    height: 20rem;
+
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    grid-template-rows: repeat(5, 1fr);
+    grid-row-gap: .5rem;
+
+    background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(37,37,37,1) 100%);
+
+    border: 1rem solid darkred;
+    border-radius: 1rem;
+
+    box-shadow: .2rem .2rem rgb(56, 0, 0);
+
+    padding: 10px;
+}
+
+.poke-links::-webkit-scrollbar{
+    background: none;
+    width: .5rem;
+}
+
+.poke-links::-webkit-scrollbar-thumb{
+    background: rgb(162, 157, 233);
+    border-radius: 1rem;
+}
+
+.poke-links::-webkit-scrollbar-thumb:hover{
+    background: rgb(128, 124, 184);
+}
+
+.poke-link {
+    color: darkslateblue;
+    text-align: center;
+
+    margin: auto;
+}
+
+.poke-link:hover {
+    color: slateblue;
+    cursor: pointer;
+}
+
+/* #endregion */
+
+/* #region  Filters */
+.filters {
+    grid-area: filters;
+
+    width: 100%;
+    height: 100px;
+
+    display: grid;
+    grid-template-areas: 
+    "gen type1 type2"
+    "search search search";
+    grid-template-columns: repeat(3, minmax(150px, 1fr));
+    grid-template-rows: repeat(2, 50px);
+
+    border-radius: 1rem;
+    box-shadow: .2rem .2rem rgb(56, 0, 0);
+
+    margin: auto;
+}
+
+.filters select {
+    background: rgb(64, 50, 185);
+    color: white;
+    width: 100%;
+
+    border-color: rgb(89, 134, 161) darkblue darkblue rgb(110, 167, 202);
+    border-style: solid;
+    border-width: .05rem .25rem .25rem 0;
+
+    cursor: pointer;
+    outline: none;
+
+    font-family: 'Press Start 2P', Arial, Helvetica, sans-serif;
+    font-size: .6rem;
+
+    -webkit-appearance: none;
+    text-indent: 1rem;
+    overflow: hidden;
+}
+
+.filters #gen {
+    grid-area: gen;
+
+    border-radius: 1rem 0 0 0;
+}
+
+.filters #type1 {
+    grid-area: type1;
+}
+
+.filters #type2 {
+    grid-area: type2;
+
+    border-radius: 0 1rem 0 0;
+}
+
+.filters #search {
+    grid-area: search;
+
+    background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(37,37,37,1) 100%);
+    color: white;
+    width: 100%;
+
+    border-color: darkred darkred darkred darkred;
+    border-style: solid;
+    border-width: .25rem .25rem .25rem .25rem;
+    border-radius: 0 0 1rem 1rem;
+
+    box-sizing: border-box;
+
+    margin: 0;
+
+    text-align: center;
+
+    font-family: 'Press Start 2P', Arial, Helvetica, sans-serif;
+    font-size: .6rem;
+
+    outline: none;
+}
+
+.filters select:focus {
+    border-color: darkblue lightskyblue lightskyblue darkblue;
+    border-style: solid;
+    border-width: .1rem .25rem .25rem .1rem;
+}
+
+.filters option {
+    background: rgb(64, 50, 185);
+    color: white;
+}
+
+/* #endregion */
+
+/* #region  Buttons */
+.buttons {
+    grid-area: buttons;
+
+    display: grid;
+    grid-template-columns: 1fr 2fr 1fr;
+    grid-template-rows: 1fr 2fr 1fr;
+
+    height: 10rem;
+    width: 10rem;
+
+    margin: auto;
+
+    background: url(/media/buttonIdle.svg);
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+.buttons .page-up{
+    grid-row: 1;
+    grid-column: 2;
+}
+
+.buttons .page-back{
+    grid-row: 2;
+    grid-column: 1;
+}
+
+.buttons .page-forward{
+    grid-row: 2;
+    grid-column: 3;
+}
+
+.buttons .page-down{
+    grid-row: 3;
+    grid-column: 2;
+}
+
+.buttons button{
+    margin: 0;
+
+    background: none;
+    border: none;
+    outline: none;
+}
+
+/* #endregion */
+
+@media only screen and (max-width: 1344px){
+    main{
+        width: 100%;
+        margin: 0;
+        padding: 0;
+
+        border: 0;
+    }
+
+    #content{
+        grid-template-areas: 
+        "display"
+        "links"
+        "filters";
+        grid-template-columns: 4fr;
+        grid-template-rows: 4fr 2fr 1fr;
+        grid-row-gap: .5rem;
+        grid-column-gap: 0;
+
+        width: 90%;
+        height: fit-content;
+
+        padding: 1rem 0;
+    }
+
+    .buttons {
+        display: none;
+    }
+
+    .poke-display {
+        width: 85%;
+        height: 40rem;
+
+        grid-template-areas:
+        "name name"
+        "sprite sprite"
+        "stats abilities"
+        "types  abilities";
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: .5fr 2fr 2fr .5fr;
+
+        margin: auto;
+    }
+
+    .poke-links{
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(5, 1fr);
+
+        width: 90%;
+
+        margin: auto;
+    }
+
+    .filters {
+        width: 80%;
+
+        grid-template-columns: repeat(3, 1fr);
+
+        margin: auto;
+    }
+}
+
+@media only screen and (max-width: 655px){
+    .filters select{
+        font-size: .45rem;
+    }
+}

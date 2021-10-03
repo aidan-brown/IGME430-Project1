@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pokédex</title>
+    <link href="https://fonts.googleapis.com/css?family=Press+Start+2P|VT323&display=swap" rel="stylesheet">
+    <link rel='stylesheet' type='text/css' href='/index.css'>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
+    <script type="text/babel">
+        let pokeSelect, pokeDisplay;
+        let page = 0;
+    
+        const handleResponse = (xhr, endpoint, reqBody) => {
+            if(xhr.response && xhr.getResponseHeader('Content-Type') === 'application/json'){
+                const obj = JSON.parse(xhr.response);
+
+                if (endpoint === '/getPokemon') {
+                    pokeSelect.innerHTML = ''
+                    obj.results.forEach((pokemon, index) => {
+                        let pokeElem = document.createElement('p');
+                        let name = pokemon.name[0].toUpperCase() + pokemon.name.slice(1);
+                        let id = (20 * reqBody.page) + index + 1
+                        pokeElem.innerHTML = `#${id}<br/>${name}`;
+                        pokeElem.className = 'poke-link'
+                        pokeElem.addEventListener('click', () => {
+                            sendAjax({endpoint: '/getPokemonById', reqMethod: 'POST', reqBody: {id: id}})
+                        })
+                        pokeSelect.append(pokeElem);
+                    });
+                } else if (endpoint === '/getPokemonById') {
+                    pokeDisplay.innerHTML = `<p>Name: ${obj.name}</p><p>Gen: ${obj.generation.name}</p><p>Base Happiness: ${obj.base_happiness}</p><p>Capture Rate: ${obj.capture_rate}</p>`;
+                }
+            }
+        }
+    
+        const sendAjax = (params={endpoint: '/', reqMethod: 'GET', reqBody: {}}) => {
+          let reqData = '';
+          const xhr = new XMLHttpRequest();
+          xhr.open(params.reqMethod, window.location.origin + params.endpoint);
+          xhr.setRequestHeader('Accept', 'application/json');
+          if(params.reqMethod == 'POST'){
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            reqData = Object.keys(params.reqBody).map(param => `${param}=${params.reqBody[param]}`).join('&');
+          }
+    
+          xhr.onload = () => handleResponse(xhr, params.endpoint, params.reqBody);
+          xhr.send(reqData);
+        }
+    
+        const init = () => {
+            pokeSelect = document.querySelector('.poke-links');
+            pokeDisplay = document.querySelector('.poke-display');
+            let buttons = document.querySelector('.buttons');
+
+            let pageForward = document.querySelector('.page-forward');
+            pageForward.onmousedown = () => {
+                buttons.style.backgroundImage = 'url(/media/buttonRight.svg)';
+                page++;
+                sendAjax({endpoint: '/getPokemon', reqMethod: 'POST', reqBody: {page: page}});
+            }
+            pageForward.onmouseup = () => {
+                buttons.style.backgroundImage = 'url(/media/buttonIdle.svg)';
+            }
+            let pageBack = document.querySelector('.page-back');
+            pageBack.onmousedown = () => {
+                buttons.style.backgroundImage = 'url(/media/buttonLeft.svg)';
+                if (page > 0){
+                    page--;
+                    sendAjax({endpoint: '/getPokemon', reqMethod: 'POST', reqBody: {page: page}});
+                }
+            }
+            pageBack.onmouseup = () => {
+                buttons.style.backgroundImage = 'url(/media/buttonIdle.svg)';
+            }
+
+            sendAjax({endpoint: '/getPokemon', reqMethod: 'POST', reqBody: {page: page}});
+        }
+
+        window.onload = init;
+    </script>
+</head>
+<body>
+    <header>
+        <a id="doc" href="#">Documentation</a>
+    </header>
+    
+    <main>
+        <div id='content'>
+            <section class="poke-display">
+                <a class="poke-wiki" target="_blank" href="#"><h2 class="poke-name"></h2></a>
+                <div class="poke-sprite"></div>
+                <div class="poke-types"></div>
+                <div class="poke-stats"></div>
+                <div class="poke-abilities"></div>
+            </section>
+            <div class="filters">
+                <select id="gen" disabled>
+                    <option value="none">Any Gen</option>
+                    <option value="I">I</option>
+                    <option value="II">II</option>
+                    <option value="III">III</option>
+                    <option value="IV">IV</option>
+                    <option value="V">V</option>
+                    <option value="VI">VI</option>
+                    <option value="VII">VII</option>
+                </select>
+                <select id="type1" disabled>
+                    <option value="none">Any 1st Type</option>
+                    <option value="normal">Normal</option>
+                    <option value="fighting">Fighting</option>
+                    <option value="flying">Flying</option>
+                    <option value="poison">Poison</option>
+                    <option value="ground">Ground</option>
+                    <option value="rock">Rock</option>
+                    <option value="bug">Bug</option>
+                    <option value="ghost">Ghost</option>
+                    <option value="steel">Steel</option>
+                    <option value="fire">Fire</option>
+                    <option value="water">Water</option>
+                    <option value="grass">Grass</option>
+                    <option value="electric">Electric</option>
+                    <option value="psychic">Psychic</option>
+                    <option value="ice">Ice</option>
+                    <option value="dragon">Dragon</option>
+                    <option value="dark">Dark</option>
+                    <option value="fairy">Fairy</option>
+                </select>
+                <select id="type2" disabled>
+                        <option value="none">Any 2nd Type</option>
+                        <option value="normal">Normal</option>
+                        <option value="fighting">Fighting</option>
+                        <option value="flying">Flying</option>
+                        <option value="poison">Poison</option>
+                        <option value="ground">Ground</option>
+                        <option value="rock">Rock</option>
+                        <option value="bug">Bug</option>
+                        <option value="ghost">Ghost</option>
+                        <option value="steel">Steel</option>
+                        <option value="fire">Fire</option>
+                        <option value="water">Water</option>
+                        <option value="grass">Grass</option>
+                        <option value="electric">Electric</option>
+                        <option value="psychic">Psychic</option>
+                        <option value="ice">Ice</option>
+                        <option value="dragon">Dragon</option>
+                        <option value="dark">Dark</option>
+                        <option value="fairy">Fairy</option>
+                </select>
+                <input id="search" placeholder="Search for a Pokémon" disabled>
+            </div>
+            <div class="poke-links"></div>
+            <div class="buttons">
+                <button class="page-up" disabled></button>
+                <button class="page-back"></button>
+                <button class="page-forward"></button>
+                <button class="page-down" disabled></button>
+            </div>
+        </div>
+    </main>
+</body>
+</html>
