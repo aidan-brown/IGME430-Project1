@@ -1,4 +1,5 @@
 const XMLHttpRequest = require('xhr2');
+const axios = require('axios').default;
 
 const pokeapiURL = 'https://pokeapi.co/api/v2';
 
@@ -13,36 +14,33 @@ const respondJSONMeta = (request, response, status) => {
   response.end();
 };
 
-const getPokemon = (request, response, body) => {
+const getPokemon = async (request, response, body) => {
   if (!body.page) {
     return respondJSON(request, response, 400, { id: 'badRequest', message: 'Request must contain a valid page number' });
   }
 
-  const req = new XMLHttpRequest();
-  req.open('get', `${pokeapiURL}/pokemon-species?limit=20&offset=${20 * body.page}`);
-
-  req.onload = () => respondJSON(request, response, 200, JSON.parse(req.response));
-
-  req.onerror = () => respondJSON(request, response, 400, { id: 'badRequest', message: 'There seems to be a problem with PokeAPI' });
-
-  return req.send();
+  const res = await axios.get(`${pokeapiURL}/pokemon-species?limit=20&offset=${20 * body.page}`);
+  
+  return respondJSON(request, response, 200, res.data);
 };
 
-const getPokemonById = (request, response, body) => {
+const getPokemonById = async (request, response, body) => {
   if (!body.id) {
     return respondJSON(request, response, 400, { id: 'badRequest', message: 'Request must contain a valid ID number' });
   }
 
-  console.log(body);
+  const gameRes = await axios.get(`${pokeapiURL}/pokemon/${body.id}`)
+  const gameData = gameRes.data;
 
-  const req = new XMLHttpRequest();
-  req.open('get', `${pokeapiURL}/pokemon-species/${body.id}`);
+  const speciesRes = await axios.get(`${pokeapiURL}/pokemon-species/${body.id}`)
+  const speciesData = speciesRes.data;
 
-  req.onload = () => respondJSON(request, response, 200, JSON.parse(req.response));
+  const responseJSON = {
+    ...gameData,
+    ...speciesData,
+  }
 
-  req.onerror = () => respondJSON(request, response, 400, { id: 'badRequest', message: 'There seems to be a problem with PokeAPI' });
-
-  return req.send();
+  return respondJSON(request, response, 200, responseJSON);
 };
 
 const getNotFound = (request, response) => {

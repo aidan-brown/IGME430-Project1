@@ -30,6 +30,7 @@
                         pokeSelect.append(pokeElem);
                     });
                 } else if (endpoint === '/getPokemonById') {
+                    console.log(obj);
                     pokeDisplay.innerHTML = `<p>Name: ${obj.name}</p><p>Gen: ${obj.generation.name}</p><p>Base Happiness: ${obj.base_happiness}</p><p>Capture Rate: ${obj.capture_rate}</p>`;
                 }
             }
