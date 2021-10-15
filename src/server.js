@@ -9,41 +9,39 @@ const port = process.env.PORT || process.env.NODE_PORT || 3000;
 const handlePost = (request, response, parsedUrl) => {
   const body = [];
   switch (parsedUrl) {
-    case '/getPokemon':
+    case '/addFavoritePokemon':
       request.on('error', (err) => {
         console.dir(err);
         response.statusCode = 400;
         response.end();
       });
-
+  
       request.on('data', (chunk) => {
         body.push(chunk);
       });
-
+  
       request.on('end', () => {
         const bodyString = Buffer.concat(body).toString();
         const bodyParams = query.parse(bodyString);
-
-        apiHandler.getPokemon(request, response, bodyParams);
+        apiHandler.addFavoritePokemon(request, response, bodyParams);
       });
       break;
 
-    case '/getPokemonById':
+    case '/removeFavoritePokemon':
       request.on('error', (err) => {
         console.dir(err);
         response.statusCode = 400;
         response.end();
       });
-
+  
       request.on('data', (chunk) => {
         body.push(chunk);
       });
-
+  
       request.on('end', () => {
         const bodyString = Buffer.concat(body).toString();
         const bodyParams = query.parse(bodyString);
-
-        apiHandler.getPokemonById(request, response, bodyParams);
+        apiHandler.removeFavoritePokemon(request, response, bodyParams);
       });
       break;
 
@@ -52,11 +50,17 @@ const handlePost = (request, response, parsedUrl) => {
   }
 };
 
-const handleGet = (request, response, parsedUrl) => {
+const handleGet = (request, response, parsedUrl, paramStr='') => {
   console.log(parsedUrl);
 
   if (parsedUrl === '/') {
     htmlHandler.getIndex(request, response);
+  } else if (parsedUrl === '/getPokemon') {
+    const bodyParams = query.parse(paramStr);
+    apiHandler.getPokemon(request, response, bodyParams);
+  } else if (parsedUrl === '/getPokemonById') {
+    const bodyParams = query.parse(paramStr);
+    apiHandler.getPokemonById(request, response, bodyParams);
   } else if (parsedUrl === '/index.css') {
     htmlHandler.getCSS(request, response);
   } else if (parsedUrl.includes('/media')) {
@@ -69,6 +73,7 @@ const handleGet = (request, response, parsedUrl) => {
 
 const onRequest = (request, response) => {
   const urlStr = request.url.split('?')[0];
+  const paramStr = request.url.split('?')[1];
 
   switch (request.method) {
     case 'POST':
@@ -76,7 +81,7 @@ const onRequest = (request, response) => {
       break;
 
     default:
-      handleGet(request, response, urlStr);
+      handleGet(request, response, urlStr, paramStr);
       break;
   }
 };

@@ -2,6 +2,7 @@ const XMLHttpRequest = require('xhr2');
 const axios = require('axios').default;
 
 const pokeapiURL = 'https://pokeapi.co/api/v2';
+let favorites = [];
 
 const respondJSON = (request, response, status, object) => {
   response.writeHead(status, { 'Content-Type': 'application/json' });
@@ -43,6 +44,36 @@ const getPokemonById = async (request, response, body) => {
   return respondJSON(request, response, 200, responseJSON);
 };
 
+const addFavoritePokemon = (request, response, body) => {
+  if (!body.name || !body.id) {
+    return respondJSON(request, response, 400, { id: 'badRequest', message: 'Request must contain a valid Name and ID number' });
+  }
+
+  if (favorites.some(e => e.id === body.id)){
+    return respondJSON(request, response, 400, { id: 'badRequest', message: 'Pokemon has been favorited already' });
+  }
+
+  const pokeData = {
+    name: body.name,
+    id: body.id,
+  };
+
+  favorites.push(pokeData);
+
+  return respondJSON(request, response, 201, pokeData);
+}
+
+const removeFavoritePokemon = (request, response, body) => {
+  if (!body.id || !favorites.some(e => e.id === body.id)){
+    return respondJSON(request, response, 400, { id: 'badRequest', message: 'Request must contain a valid ID number' });
+  }
+
+  const removedPokeData = favorites.filter(e => e.id === body.id)[0];
+  favorites = favorites.filter(e => e.id !== body.id);
+
+  return respondJSON(request, response, 200, removedPokeData);
+}
+
 const getNotFound = (request, response) => {
   const responseJSON = {
     id: 'notFound',
@@ -59,4 +90,6 @@ module.exports = {
   getPokemon,
   getPokemonById,
   getNotFound,
+  addFavoritePokemon,
+  removeFavoritePokemon
 };

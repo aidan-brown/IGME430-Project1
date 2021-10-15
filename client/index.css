@@ -19,7 +19,7 @@ main {
     background: red;
     background: linear-gradient(315deg, rgba(167,0,0,1) 0%, rgba(255,0,0,1) 25%, rgba(255,0,0,1) 50%, rgba(255,0,0,1) 75%, rgba(255,110,110,1) 100%);
 
-    width: 78rem;
+    width: 1650px;
     margin: 10rem auto;
     padding: 2rem;
 
@@ -50,16 +50,16 @@ main {
 
     display: grid;
     grid-template-areas:
-        "display links"
-        "display filters"
-        "display buttons";
-    grid-template-columns: 4fr 2fr;
+        "display links links"
+        "display links links"
+        "display buttons favorites";
+    grid-template-columns: 800px 200px 600px;
     grid-template-rows: 4fr 1fr 2fr;
     grid-column-gap: 5rem;
     grid-row-gap: 0;
     margin: auto;
 
-    width: 75rem;
+    width: 1650px;
     height: 50rem;
 
     font-family: 'Press Start 2P', Arial, Helvetica, sans-serif;
@@ -72,18 +72,18 @@ main {
     background: url(/media/dexBg.jpg);
     background-position: center;
 
-    /* display: grid; */
+    display: grid;
     grid-template-areas:
-        "name name name name"
+        "name name name gen"
         "sprite sprite sprite sprite"
-        "stats stats abilities abilities"
-        "types  types  abilities abilities";
+        "stats abilities behavior misc"
+        "types  types  types fav";
     grid-template-columns: 2fr 2fr 2fr 2fr;
-    grid-template-rows: .5fr 2fr 10rem 2rem;
+    grid-template-rows: .5fr 2fr 12rem 2rem;
 
-    padding: 0 0 .5rem 0;
+    padding: 1rem;
 
-    width: 100%;
+    width: 700px;
 
     border: 2rem solid rgb(196, 167, 167);
     border-radius: 1rem 1rem 1rem 5rem;
@@ -94,6 +94,7 @@ main {
 .poke-display>div{
     border-style: solid;
     border-color: rgba(0, 0, 0, 0);
+    font-size: xx-small;
 }
 
 .poke-wiki {
@@ -149,27 +150,11 @@ main {
     width: 100%;
     height: 100%;
     margin: auto;
-    padding-top: 1rem;
-
-    border-width: .5rem 0 0 0;
-}
-
-.poke-stats div{
+    
     display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
-    margin: auto;
-    width: 95%;
-}
-
-.poke-stats div p{
-    margin: 0;
-}
-
-.poke-stats p {
-    font-size: 1rem;
-    margin: 1rem;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .poke-abilities {
@@ -177,20 +162,13 @@ main {
 
     height: 100%;
 
-    border-width: .5rem 0 0 .5rem;
-
     overflow-y: scroll;
     overflow-x: hidden;
-}
-
-.poke-abilities p {
-    margin-left: .5rem;
-    font-size: 1rem;
-    font-family: 'VT323', Arial, Helvetica, sans-serif;
-}
-
-.poke-abilities p strong {
-    font-family: 'Press Start 2P', Arial, Helvetica, sans-serif;
+        
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
 }
 
 .poke-abilities::-webkit-scrollbar{
@@ -207,6 +185,54 @@ main {
     background: rgb(128, 124, 184);
 }
 
+.poke-gen {
+    grid-area: gen;
+    font-size: xx-large !important;
+        
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.poke-behavior {
+    grid-area: behavior;
+        
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.poke-misc {
+    grid-area: misc;
+        
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: flex-start;
+}
+
+.poke-fav-button {
+    grid-area: fav;
+
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+}
+
+.fav-button {
+    color: rgba(0, 0, 0, 0.473);
+    transition: all 200ms;
+}
+
+.fav-button:hover {
+    transform: scale(1.1);
+    color: black;
+    cursor: pointer;
+}
+
 .poke-types {
     grid-area: types;
 
@@ -219,6 +245,7 @@ main {
     grid-column-gap: 1rem;
 
     text-align: center;
+    font-size: medium !important;
 
     margin: auto;
 
@@ -364,7 +391,7 @@ main {
 .poke-links {
     grid-area: links;
 
-    width: 700px;
+    width: 675px;
     height: 20rem;
 
     display: grid;
@@ -410,95 +437,68 @@ main {
 
 /* #endregion */
 
-/* #region  Filters */
-.filters {
-    grid-area: filters;
+/* #region  Favorites */
+.poke-favorites {
+    grid-area: favorites;
 
-    width: 100%;
-    height: 100px;
+    width: 400px;
+    height: 20rem;
 
     display: grid;
-    grid-template-areas: 
-    "gen type1 type2"
-    "search search search";
-    grid-template-columns: repeat(3, minmax(150px, 1fr));
-    grid-template-rows: repeat(2, 50px);
-
-    border-radius: 1rem;
-    box-shadow: .2rem .2rem rgb(56, 0, 0);
-
-    margin: auto;
-}
-
-.filters select {
-    background: rgb(64, 50, 185);
-    color: white;
-    width: 100%;
-
-    border-color: rgb(89, 134, 161) darkblue darkblue rgb(110, 167, 202);
-    border-style: solid;
-    border-width: .05rem .25rem .25rem 0;
-
-    cursor: pointer;
-    outline: none;
-
-    font-family: 'Press Start 2P', Arial, Helvetica, sans-serif;
-    font-size: .6rem;
-
-    -webkit-appearance: none;
-    text-indent: 1rem;
-    overflow: hidden;
-}
-
-.filters #gen {
-    grid-area: gen;
-
-    border-radius: 1rem 0 0 0;
-}
-
-.filters #type1 {
-    grid-area: type1;
-}
-
-.filters #type2 {
-    grid-area: type2;
-
-    border-radius: 0 1rem 0 0;
-}
-
-.filters #search {
-    grid-area: search;
+    grid-template-columns: 100%;
+    grid-template-rows: 1fr 5fr;
+    grid-row-gap: .5rem;
 
     background: radial-gradient(circle, rgba(2,0,36,1) 0%, rgba(37,37,37,1) 100%);
-    color: white;
-    width: 100%;
 
-    border-color: darkred darkred darkred darkred;
-    border-style: solid;
-    border-width: .25rem .25rem .25rem .25rem;
-    border-radius: 0 0 1rem 1rem;
+    border: 1rem solid darkred;
+    border-radius: 1rem;
 
-    box-sizing: border-box;
+    box-shadow: .2rem .2rem rgb(56, 0, 0);
 
-    margin: 0;
-
-    text-align: center;
-
-    font-family: 'Press Start 2P', Arial, Helvetica, sans-serif;
-    font-size: .6rem;
-
-    outline: none;
+    padding: 10px;
 }
 
-.filters select:focus {
-    border-color: darkblue lightskyblue lightskyblue darkblue;
-    border-style: solid;
-    border-width: .1rem .25rem .25rem .1rem;
+.poke-fav-list {
+    overflow-y: scroll;
+    overflow-x: hidden;
 }
 
-.filters option {
-    background: rgb(64, 50, 185);
+.poke-favorites h3{
     color: white;
+}
+
+.poke-fav {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    margin: 1rem auto;
+}
+
+.poke-fav span {
+    color: rgba(255, 255, 255, 0.719);
+    transition: all 200ms;
+}
+
+.poke-fav span:hover {
+    transform: scale(1.1);
+    color: white;
+    cursor: pointer;
+}
+
+.poke-fav-list::-webkit-scrollbar{
+    background: none;
+    width: .5rem;
+}
+
+.poke-fav-list::-webkit-scrollbar-thumb{
+    background: rgb(162, 157, 233);
+    border-radius: 1rem;
+}
+
+.poke-fav-list::-webkit-scrollbar-thumb:hover{
+    background: rgb(128, 124, 184);
 }
 
 /* #endregion */
@@ -514,7 +514,7 @@ main {
     height: 10rem;
     width: 10rem;
 
-    margin: auto;
+    margin: auto 0 auto 50px;
 
     background: url(/media/buttonIdle.svg);
     background-repeat: no-repeat;
@@ -550,71 +550,3 @@ main {
 }
 
 /* #endregion */
-
-@media only screen and (max-width: 1344px){
-    main{
-        width: 100%;
-        margin: 0;
-        padding: 0;
-
-        border: 0;
-    }
-
-    #content{
-        grid-template-areas: 
-        "display"
-        "links"
-        "filters";
-        grid-template-columns: 4fr;
-        grid-template-rows: 4fr 2fr 1fr;
-        grid-row-gap: .5rem;
-        grid-column-gap: 0;
-
-        width: 90%;
-        height: fit-content;
-
-        padding: 1rem 0;
-    }
-
-    .buttons {
-        display: none;
-    }
-
-    .poke-display {
-        width: 85%;
-        height: 40rem;
-
-        grid-template-areas:
-        "name name"
-        "sprite sprite"
-        "stats abilities"
-        "types  abilities";
-        grid-template-columns: 1fr 1fr;
-        grid-template-rows: .5fr 2fr 2fr .5fr;
-
-        margin: auto;
-    }
-
-    .poke-links{
-        grid-template-columns: repeat(4, 1fr);
-        grid-template-rows: repeat(5, 1fr);
-
-        width: 90%;
-
-        margin: auto;
-    }
-
-    .filters {
-        width: 80%;
-
-        grid-template-columns: repeat(3, 1fr);
-
-        margin: auto;
-    }
-}
-
-@media only screen and (max-width: 655px){
-    .filters select{
-        font-size: .45rem;
-    }
-}

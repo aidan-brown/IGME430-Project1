@@ -6,10 +6,11 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Pokédex</title>
     <link href="https://fonts.googleapis.com/css?family=Press+Start+2P|VT323&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel='stylesheet' type='text/css' href='/index.css'>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-core/5.8.34/browser.min.js"></script>
     <script type="text/babel">
-        let pokeSelect, pokeDisplay;
+        let pokeSelect, pokeDisplay, pokeFavDisplay;
         let page = 0;
     
         const handleResponse = (xhr, endpoint, reqBody) => {
@@ -25,27 +26,89 @@
                         pokeElem.innerHTML = `#${id}<br/>${name}`;
                         pokeElem.className = 'poke-link'
                         pokeElem.addEventListener('click', () => {
-                            sendAjax({endpoint: '/getPokemonById', reqMethod: 'POST', reqBody: {id: id}})
+                            sendAjax({endpoint: '/getPokemonById', reqMethod: 'GET', reqBody: {id: id}})
                         })
                         pokeSelect.append(pokeElem);
                     });
                 } else if (endpoint === '/getPokemonById') {
                     console.log(obj);
-                    pokeDisplay.innerHTML = `<p>Name: ${obj.name}</p><p>Gen: ${obj.generation.name}</p><p>Base Happiness: ${obj.base_happiness}</p><p>Capture Rate: ${obj.capture_rate}</p>`;
+                    document.querySelector('.poke-name').innerHTML = obj.name[0].toUpperCase() + obj.name.slice(1);
+                    document.querySelector('.poke-gen').innerHTML = obj.generation.name.replace('generation-', '').toUpperCase();
+                    document.querySelector('.poke-sprite').innerHTML = `<img src="${obj.sprites.front_default}"/>`
+
+                    let pokeStats = document.querySelector('.poke-stats');
+                    pokeStats.innerHTML = '';
+                    obj.stats.forEach(stat => pokeStats.innerHTML += `<p><strong>${stat.stat.name.toUpperCase()}:</strong> ${stat.base_stat}</p>`);
+
+
+                    let pokeAbilities = document.querySelector('.poke-abilities');
+                    pokeAbilities.innerHTML = '';
+                    obj.abilities.forEach(ability => pokeAbilities.innerHTML += `<p><strong>${ability.ability.name.toUpperCase()}</strong></p>`);
+
+                    let pokeBehavior = document.querySelector('.poke-behavior');
+                    pokeBehavior.innerHTML = `<p><strong>BASE XP:</strong> ${obj.base_experience}</p>
+                    <p><strong>BASE HAPPINESS:</strong> ${obj.base_happiness}</p>
+                    <p><strong>CAPTURE RATE:</strong> ${obj.capture_rate}</p>`;
+
+                    let pokeMisc = document.querySelector('.poke-misc');
+                    pokeMisc.innerHTML = `<p><strong>GENDER RATE:</strong> ${obj.gender_rate}</p>
+                    <p><strong>COLOR:</strong> ${obj.color.name}</p>
+                    <p><strong>SHAPE:</strong> ${obj.shape.name}</p>`;
+                    if(obj.evolves_from_species){
+                        pokeMisc.innerHTML += `<p><strong>EVOLVES FROM:</strong> ${obj.evolves_from_species.name}</p>`;
+                    }
+
+                    let pokeTypes = document.querySelector('.poke-types');
+                    pokeTypes.innerHTML = '';
+                    obj.types.forEach(type => pokeTypes.innerHTML += `<p class='${type.type.name}'>${type.type.name.toUpperCase()}</p>`);
+
+                    let favButton = document.querySelector('.fav-button');
+                    if(favButton.disabled){
+                        favButton.disabled = false;
+                    }
+                    favButton.onclick = () => sendAjax({endpoint: '/addFavoritePokemon', reqMethod: 'POST', reqBody:{name: obj.name, id: obj.id}});
+                } else if (endpoint === '/addFavoritePokemon'){
+                    let pokeFavElem = document.createElement('span');
+                    pokeFavElem.className = 'poke-fav';
+
+                    let pokeFavLink = document.createElement('p');
+                    pokeFavLink.innerHTML = `#${obj.id} ${obj.name[0].toUpperCase() + obj.name.slice(1)}`
+                    pokeFavLink.className = 'poke-link';
+                    pokeFavElem.id = obj.id;
+                    pokeFavLink.onclick = () => sendAjax({endpoint: '/getPokemonById', reqMethod: 'GET', reqBody: {id: obj.id}});
+                    pokeFavElem.append(pokeFavLink);
+
+                    let pokeFavDelete = document.createElement('span');
+                    pokeFavDelete.innerHTML = 'delete';
+                    pokeFavDelete.className = 'material-icons';
+                    pokeFavDelete.onclick = () => sendAjax({endpoint: '/removeFavoritePokemon', reqMethod: 'POST', reqBody:{id: obj.id}});
+                    pokeFavElem.append(pokeFavDelete);
+
+                    pokeFavDisplay.append(pokeFavElem);
+                } else if (endpoint === '/removeFavoritePokemon'){
+                    console.log(obj)
+                    pokeFavDisplay.removeChild(document.getElementById(`${obj.id}`));
                 }
             }
         }
     
         const sendAjax = (params={endpoint: '/', reqMethod: 'GET', reqBody: {}}) => {
           let reqData = '';
-          const xhr = new XMLHttpRequest();
-          xhr.open(params.reqMethod, window.location.origin + params.endpoint);
-          xhr.setRequestHeader('Accept', 'application/json');
-          if(params.reqMethod == 'POST'){
-            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          let url = window.location.origin + params.endpoint;
+
+          if (params.reqBody !== {}){
             reqData = Object.keys(params.reqBody).map(param => `${param}=${params.reqBody[param]}`).join('&');
+            if(params.reqMethod === 'GET'){
+                url += `?${reqData}`;
+            }
           }
-    
+
+          const xhr = new XMLHttpRequest();
+          xhr.open(params.reqMethod, url);
+          xhr.setRequestHeader('Accept', 'application/json');
+          if(reqData !== ''){
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+          }
           xhr.onload = () => handleResponse(xhr, params.endpoint, params.reqBody);
           xhr.send(reqData);
         }
@@ -53,13 +116,14 @@
         const init = () => {
             pokeSelect = document.querySelector('.poke-links');
             pokeDisplay = document.querySelector('.poke-display');
+            pokeFavDisplay = document.querySelector('.poke-fav-list');
             let buttons = document.querySelector('.buttons');
 
             let pageForward = document.querySelector('.page-forward');
             pageForward.onmousedown = () => {
                 buttons.style.backgroundImage = 'url(/media/buttonRight.svg)';
                 page++;
-                sendAjax({endpoint: '/getPokemon', reqMethod: 'POST', reqBody: {page: page}});
+                sendAjax({endpoint: '/getPokemon', reqMethod: 'GET', reqBody: {page: page}});
             }
             pageForward.onmouseup = () => {
                 buttons.style.backgroundImage = 'url(/media/buttonIdle.svg)';
@@ -69,87 +133,38 @@
                 buttons.style.backgroundImage = 'url(/media/buttonLeft.svg)';
                 if (page > 0){
                     page--;
-                    sendAjax({endpoint: '/getPokemon', reqMethod: 'POST', reqBody: {page: page}});
+                    sendAjax({endpoint: '/getPokemon', reqMethod: 'GET', reqBody: {page: page}});
                 }
             }
             pageBack.onmouseup = () => {
                 buttons.style.backgroundImage = 'url(/media/buttonIdle.svg)';
             }
 
-            sendAjax({endpoint: '/getPokemon', reqMethod: 'POST', reqBody: {page: page}});
+            sendAjax({endpoint: '/getPokemon', reqMethod: 'GET', reqBody: {page: page}});
         }
 
         window.onload = init;
     </script>
 </head>
 <body>
-    <header>
-        <a id="doc" href="#">Documentation</a>
-    </header>
-    
     <main>
         <div id='content'>
             <section class="poke-display">
                 <a class="poke-wiki" target="_blank" href="#"><h2 class="poke-name"></h2></a>
+                <div class="poke-gen"></div>
                 <div class="poke-sprite"></div>
                 <div class="poke-types"></div>
                 <div class="poke-stats"></div>
+                <div class="poke-behavior"></div>
                 <div class="poke-abilities"></div>
+                <div class="poke-misc"></div>
+                <div class="poke-fav-button">
+                    <span class="material-icons fav-button">add_circle</span>
+                </div>
             </section>
-            <div class="filters">
-                <select id="gen" disabled>
-                    <option value="none">Any Gen</option>
-                    <option value="I">I</option>
-                    <option value="II">II</option>
-                    <option value="III">III</option>
-                    <option value="IV">IV</option>
-                    <option value="V">V</option>
-                    <option value="VI">VI</option>
-                    <option value="VII">VII</option>
-                </select>
-                <select id="type1" disabled>
-                    <option value="none">Any 1st Type</option>
-                    <option value="normal">Normal</option>
-                    <option value="fighting">Fighting</option>
-                    <option value="flying">Flying</option>
-                    <option value="poison">Poison</option>
-                    <option value="ground">Ground</option>
-                    <option value="rock">Rock</option>
-                    <option value="bug">Bug</option>
-                    <option value="ghost">Ghost</option>
-                    <option value="steel">Steel</option>
-                    <option value="fire">Fire</option>
-                    <option value="water">Water</option>
-                    <option value="grass">Grass</option>
-                    <option value="electric">Electric</option>
-                    <option value="psychic">Psychic</option>
-                    <option value="ice">Ice</option>
-                    <option value="dragon">Dragon</option>
-                    <option value="dark">Dark</option>
-                    <option value="fairy">Fairy</option>
-                </select>
-                <select id="type2" disabled>
-                        <option value="none">Any 2nd Type</option>
-                        <option value="normal">Normal</option>
-                        <option value="fighting">Fighting</option>
-                        <option value="flying">Flying</option>
-                        <option value="poison">Poison</option>
-                        <option value="ground">Ground</option>
-                        <option value="rock">Rock</option>
-                        <option value="bug">Bug</option>
-                        <option value="ghost">Ghost</option>
-                        <option value="steel">Steel</option>
-                        <option value="fire">Fire</option>
-                        <option value="water">Water</option>
-                        <option value="grass">Grass</option>
-                        <option value="electric">Electric</option>
-                        <option value="psychic">Psychic</option>
-                        <option value="ice">Ice</option>
-                        <option value="dragon">Dragon</option>
-                        <option value="dark">Dark</option>
-                        <option value="fairy">Fairy</option>
-                </select>
-                <input id="search" placeholder="Search for a Pokémon" disabled>
+            <div class="poke-favorites">
+                <h3>Favorites</h3>
+                <div class="poke-fav-list"></div>
             </div>
             <div class="poke-links"></div>
             <div class="buttons">
