@@ -31,7 +31,6 @@
                         pokeSelect.append(pokeElem);
                     });
                 } else if (endpoint === '/getPokemonById') {
-                    console.log(obj);
                     document.querySelector('.poke-name').innerHTML = obj.name[0].toUpperCase() + obj.name.slice(1);
                     document.querySelector('.poke-gen').innerHTML = obj.generation.name.replace('generation-', '').toUpperCase();
                     document.querySelector('.poke-sprite').innerHTML = `<img src="${obj.sprites.front_default}"/>`
@@ -86,7 +85,6 @@
 
                     pokeFavDisplay.append(pokeFavElem);
                 } else if (endpoint === '/removeFavoritePokemon'){
-                    console.log(obj)
                     pokeFavDisplay.removeChild(document.getElementById(`${obj.id}`));
                 }
             }

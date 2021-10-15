@@ -1,4 +1,3 @@
-const XMLHttpRequest = require('xhr2');
 const axios = require('axios').default;
 
 const pokeapiURL = 'https://pokeapi.co/api/v2';
@@ -21,7 +20,7 @@ const getPokemon = async (request, response, body) => {
   }
 
   const res = await axios.get(`${pokeapiURL}/pokemon-species?limit=20&offset=${20 * body.page}`);
-  
+
   return respondJSON(request, response, 200, res.data);
 };
 
@@ -30,16 +29,16 @@ const getPokemonById = async (request, response, body) => {
     return respondJSON(request, response, 400, { id: 'badRequest', message: 'Request must contain a valid ID number' });
   }
 
-  const gameRes = await axios.get(`${pokeapiURL}/pokemon/${body.id}`)
+  const gameRes = await axios.get(`${pokeapiURL}/pokemon/${body.id}`);
   const gameData = gameRes.data;
 
-  const speciesRes = await axios.get(`${pokeapiURL}/pokemon-species/${body.id}`)
+  const speciesRes = await axios.get(`${pokeapiURL}/pokemon-species/${body.id}`);
   const speciesData = speciesRes.data;
 
   const responseJSON = {
     ...gameData,
     ...speciesData,
-  }
+  };
 
   return respondJSON(request, response, 200, responseJSON);
 };
@@ -49,7 +48,7 @@ const addFavoritePokemon = (request, response, body) => {
     return respondJSON(request, response, 400, { id: 'badRequest', message: 'Request must contain a valid Name and ID number' });
   }
 
-  if (favorites.some(e => e.id === body.id)){
+  if (favorites.some((e) => e.id === body.id)) {
     return respondJSON(request, response, 400, { id: 'badRequest', message: 'Pokemon has been favorited already' });
   }
 
@@ -61,18 +60,18 @@ const addFavoritePokemon = (request, response, body) => {
   favorites.push(pokeData);
 
   return respondJSON(request, response, 201, pokeData);
-}
+};
 
 const removeFavoritePokemon = (request, response, body) => {
-  if (!body.id || !favorites.some(e => e.id === body.id)){
+  if (!body.id || !favorites.some((e) => e.id === body.id)) {
     return respondJSON(request, response, 400, { id: 'badRequest', message: 'Request must contain a valid ID number' });
   }
 
-  const removedPokeData = favorites.filter(e => e.id === body.id)[0];
-  favorites = favorites.filter(e => e.id !== body.id);
+  const removedPokeData = favorites.filter((e) => e.id === body.id)[0];
+  favorites = favorites.filter((e) => e.id !== body.id);
 
   return respondJSON(request, response, 200, removedPokeData);
-}
+};
 
 const getNotFound = (request, response) => {
   const responseJSON = {
@@ -91,5 +90,5 @@ module.exports = {
   getPokemonById,
   getNotFound,
   addFavoritePokemon,
-  removeFavoritePokemon
+  removeFavoritePokemon,
 };
